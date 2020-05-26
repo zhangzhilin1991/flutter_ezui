@@ -36,4 +36,16 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
     implementation project(path: ':flutter')
+
+    /*萤石SDK核心模块，必须依赖*/
+    implementation 'com.ezviz.sdk:ezviz-sdk:4.10.1'
+
+    /*pull to refresh*/
+    implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
+    /*recyclerview*/
+    implementation "androidx.recyclerview:recyclerview:1.1.0"
+    // For control over item selection of both touch and mouse driven selection
+    implementation "androidx.recyclerview:recyclerview-selection:1.1.0-rc01"
+    implementation "androidx.cardview:cardview:1.0.0"
+    implementation 'com.google.android.material:material:1.0.0'
 }

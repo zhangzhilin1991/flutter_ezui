@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageButton
+        android:id="@+id/iv_take_photo"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="@android:color/transparent"
+        android:src="@mipmap/takepicture"
+        android:layout_weight="1"
+        />
+
+    <ImageButton
+        android:id="@+id/iv_record_video"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:src="@mipmap/recordvideo"
+        android:background="@android:color/transparent"
+        android:layout_weight="1"
+        />
+
+    <ImageButton
+        android:id="@+id/iv_set_resolution"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:src="@mipmap/resoution"
+        android:background="@android:color/transparent"
+        android:layout_weight="1"
+        />
+
+    <ImageButton
+        android:id="@+id/delete_video"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:src="@mipmap/delete_video"
+        android:background="@android:color/transparent"
+        android:layout_weight="1"
+        />
+
+    <ImageButton
+        android:id="@+id/iv_switch_mute"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:src="@mipmap/volume"
+        android:background="@android:color/transparent"
+        android:layout_weight="1"
+        />
+
+</LinearLayout>

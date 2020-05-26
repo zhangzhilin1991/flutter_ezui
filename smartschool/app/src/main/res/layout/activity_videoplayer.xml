@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cl_videopalyer_4channel"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="100dp"
+        android:gravity="center"
+        >
+        <include
+            android:id="@+id/sf_player_surface1"
+            layout="@layout/activity_videoplayer_surface"
+            android:layout_width="160dp"
+            android:layout_height="120dp"
+            android:layout_marginRight="5dp"
+            />
+
+        <include
+            android:id="@+id/sf_player_surface2"
+            layout="@layout/activity_videoplayer_surface"
+            android:layout_width="160dp"
+            android:layout_height="120dp"
+            android:layout_marginLeft="5dp"
+           />
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginTop="10dp"
+        >
+        <include
+            android:id="@+id/sf_player_surface3"
+            layout="@layout/activity_videoplayer_surface"
+            android:layout_width="160dp"
+            android:layout_height="120dp"
+            android:layout_marginRight="5dp"
+            />
+
+        <include
+            android:id="@+id/sf_player_surface4"
+            layout="@layout/activity_videoplayer_surface"
+            android:layout_width="160dp"
+            android:layout_height="120dp"
+            android:layout_marginLeft="5dp"
+            />
+
+    </LinearLayout>
+
+    <include
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="100dp"
+        layout="@layout/activity_videoplayer_control_panel"
+        />
+
+</LinearLayout>
