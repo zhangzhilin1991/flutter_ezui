@@ -1,11 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
+<LinearLayout
+    android:id="@+id/fl_video_player"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:gravity="center"
+    >
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="200dp">
 
     <SurfaceView
-        android:id="@+id/sf_ezui_player"
+        android:id="@+id/sf_player_surface"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone"
@@ -13,7 +20,7 @@
     </SurfaceView>
 
     <ImageButton
-        android:id="@+id/btn_add_player"
+        android:id="@+id/ibtn_add_player"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:src="@mipmap/add"
@@ -21,4 +28,6 @@
         >
     </ImageButton>
 
-</FrameLayout>
+    </FrameLayout>
+
+</LinearLayout>

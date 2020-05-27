@@ -3,7 +3,11 @@ package com.nyiit.smartschool;
 import android.app.Application;
 import android.content.Intent;
 
+import com.nyiit.smartschool.bean.VideoPlayerBean;
 import com.videogo.openapi.EZOpenSDK;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import io.flutter.embedding.engine.FlutterEngine;
 import io.flutter.embedding.engine.FlutterEngineCache;
@@ -15,6 +19,8 @@ public class App extends Application {
 
     private final String APP_KEY = "cbc4453d01b2406da120d5ed1453b737";
 
+    private Map<Integer, VideoPlayerBean> ezPlayerMaps = new HashMap<>(); //四路player
+    
     private MethodChannel channel;
     FlutterEngine flutterEngine;
 
@@ -62,4 +68,16 @@ public class App extends Application {
         });
     }
         //channel
+    
+    public Map<Integer, VideoPlayerBean> getEzPlayerMaps() {
+        return ezPlayerMaps;
+    }
+    
+    public void clearEzPlayerMaps() {
+        //for (VideoPlayerBean videoPlayerBean : ezPlayerMaps.values()) {
+        //    //System.out.println("Value = " + value);
+        //    videoPlayerBean.getEzPlayer().release();
+        //}
+        ezPlayerMaps.clear();
+    }
 }

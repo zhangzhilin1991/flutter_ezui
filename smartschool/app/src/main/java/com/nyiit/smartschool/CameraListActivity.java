@@ -20,9 +20,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.nyiit.smartschool.adapter.CameraListPullToRefreshAdapter;
+import com.nyiit.smartschool.constants.IntentConstants;
 import com.nyiit.smartschool.util.EZUtils;
 import com.videogo.camera.CameraInfo;
-import com.videogo.constant.IntentConsts;
 import com.videogo.exception.BaseException;
 import com.videogo.openapi.EZOpenSDK;
 import com.videogo.openapi.EzvizAPI;
@@ -33,15 +33,17 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.nyiit.smartschool.constants.IntentConstants.INTENT_REQUEST_CODE_SELECT_NEW_DEVICE;
+import static com.nyiit.smartschool.constants.IntentConstants.INTENT_RESPONSE_CODE_SELECT_NEW_DEVICE;
 import static com.videogo.constant.Constant.OAUTH_SUCCESS_ACTION;
 
 public class CameraListActivity extends AppCompatActivity implements CameraListPullToRefreshAdapter.OnCameraClickListener {
     private static final String TAG = CameraListActivity.class.getName();
 
-    public static final int INTENT_REQUEST_CODE_SELECT_NEW_DEVICE = 0;
-    public static final int INTENT_RESPONSE_CODE_SELECT_NEW_DEVICE = 1;
     //public static final int INTENT_REQUEST_CODE_SELECT_NEW_DEVICE = 0;
-    public static final String PLAYER_INDEX_KEY = "PLAYER_INDEX_KEY";
+    //public static final int INTENT_RESPONSE_CODE_SELECT_NEW_DEVICE = 1;
+    //public static final int INTENT_REQUEST_CODE_SELECT_NEW_DEVICE = 0;
+    //public static final String PLAYER_INDEX_KEY = "PLAYER_INDEX_KEY";
 
     private RecyclerView cameraListView;
     private SwipeRefreshLayout swipeRefreshLayout;
@@ -78,6 +80,12 @@ public class CameraListActivity extends AppCompatActivity implements CameraListP
     protected void onResume() {
         super.onResume();
         checkLoginState();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        ((App)getApplication()).getEzPlayerMaps().clear();
     }
 
     void initView() {
@@ -122,11 +130,11 @@ public class CameraListActivity extends AppCompatActivity implements CameraListP
             return;
         }
         Intent intent = new Intent(CameraListActivity.this, VideoPlayerActivity.class);
-        intent.putExtra(PLAYER_INDEX_KEY, playerIndex);
-        intent.putExtra(IntentConsts.EXTRA_CAMERA_INFO, cameraInfo);
-        intent.putExtra(IntentConsts.EXTRA_DEVICE_INFO, eZDeviceInfo);
-        //startActivityForResult(intent, INTENT_REQUEST_CODE_SELECT_NEW_DEVICE);
-        startActivity(intent);
+        intent.putExtra(IntentConstants.EXTRA_PLAYER_INDEX_KEY, playerIndex);
+        intent.putExtra(IntentConstants.EXTRA_CAMERA_INFO, cameraInfo);
+        intent.putExtra(IntentConstants.EXTRA_DEVICE_INFO, eZDeviceInfo);
+        startActivityForResult(intent, INTENT_REQUEST_CODE_SELECT_NEW_DEVICE);
+        //startActivity(intent);
     }
 
     @Override
@@ -142,11 +150,12 @@ public class CameraListActivity extends AppCompatActivity implements CameraListP
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         //
-        if (resultCode == INTENT_REQUEST_CODE_SELECT_NEW_DEVICE) {
-            playerIndex = data.getIntExtra(PLAYER_INDEX_KEY, 0);
+        if (resultCode == INTENT_RESPONSE_CODE_SELECT_NEW_DEVICE) {
+            playerIndex = data.getIntExtra(IntentConstants.EXTRA_PLAYER_INDEX_KEY, 0);
         } else {
             playerIndex = 0;
         }
+        Log.d(TAG, "onActivityResult() playerIndex: " + playerIndex);
         
         super.onActivityResult(requestCode, resultCode, data);
     }
