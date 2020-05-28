@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Intent;
 
 import com.nyiit.smartschool.bean.VideoPlayerBean;
+import com.nyiit.smartschool.ui.cameralist.CameraListActivity;
 import com.videogo.openapi.EZOpenSDK;
 
 import java.util.HashMap;

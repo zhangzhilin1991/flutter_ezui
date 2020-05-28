@@ -24,4 +24,14 @@
         <item name="tabSelectedTextColor">@android:color/holo_green_dark</item>
     </style>
 
+    <style name="CustomRadioBtn">
+        <item name="android:gravity">center</item>
+        <item name="android:background">@null</item>
+        <item name="android:button">@null</item>
+    </style>
+
+    ————————————————
+    版权声明：本文为CSDN博主「空心菜的爱」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。
+    原文链接：https://blog.csdn.net/u010399316/article/details/47320745
+
 </resources>

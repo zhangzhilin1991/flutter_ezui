@@ -31,7 +31,7 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".CameraListActivity"
+        <activity android:name=".ui.cameralist.CameraListActivity"
             android:theme="@style/AppTheme">
         </activity>
 
@@ -46,12 +46,19 @@
                 android:value="io.flutter.embedding.android.FlutterActivity" />
         </activity>
 
-        <activity android:name=".VideoPlayerActivity"
+        <activity android:name=".ui.videoplay.VideoPlayActivity"
             android:theme="@style/AppTheme"
             android:screenOrientation="portrait"
             >
 
         </activity>
+
+        <activity android:name=".ui.videoplayback.VideoPlayBackActivity"
+            android:theme="@style/AppTheme"
+            android:screenOrientation="portrait"
+            >
+        </activity>
+
 
         <activity
             android:name="io.flutter.embedding.android.FlutterActivity"

@@ -5,4 +5,7 @@
     <color name="colorAccent">#03DAC5</color>
 
     <color name="color_monitor_name">#333333</color>
+
+    <color name="color_video_resolution_text_color_selected">#2770EE</color>
+    <color name="color_video_resolution_text_color_normal">#666666</color>
 </resources>

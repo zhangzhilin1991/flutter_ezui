@@ -7,4 +7,5 @@ public class IntentConstants {
     public static final String EXTRA_PLAYER_INDEX_KEY = "EXTRA_PLAYER_INDEX_KEY";
     public static final String EXTRA_CAMERA_INFO = "EXTRA_CAMERA_INFO";
     public static final String EXTRA_DEVICE_INFO = "EXTRA_DEVICE_INFO";
+    public static final String QUERY_DATE_INTENT_KEY = "queryDate";
 }

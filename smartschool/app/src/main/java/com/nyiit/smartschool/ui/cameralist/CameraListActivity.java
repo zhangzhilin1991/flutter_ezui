@@ -1,4 +1,4 @@
-package com.nyiit.smartschool;
+package com.nyiit.smartschool.ui.cameralist;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -19,15 +19,19 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.nyiit.smartschool.App;
+import com.nyiit.smartschool.R;
+import com.nyiit.smartschool.ui.videoplayback.VideoPlayBackActivity;
+import com.nyiit.smartschool.ui.videoplay.VideoPlayActivity;
 import com.nyiit.smartschool.adapter.CameraListPullToRefreshAdapter;
 import com.nyiit.smartschool.constants.IntentConstants;
 import com.nyiit.smartschool.util.EZUtils;
-import com.videogo.camera.CameraInfo;
 import com.videogo.exception.BaseException;
 import com.videogo.openapi.EZOpenSDK;
 import com.videogo.openapi.EzvizAPI;
 import com.videogo.openapi.bean.EZCameraInfo;
 import com.videogo.openapi.bean.EZDeviceInfo;
+import com.videogo.util.DateTimeUtil;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -129,7 +133,7 @@ public class CameraListActivity extends AppCompatActivity implements CameraListP
         if (cameraInfo == null) {
             return;
         }
-        Intent intent = new Intent(CameraListActivity.this, VideoPlayerActivity.class);
+        Intent intent = new Intent(CameraListActivity.this, VideoPlayActivity.class);
         intent.putExtra(IntentConstants.EXTRA_PLAYER_INDEX_KEY, playerIndex);
         intent.putExtra(IntentConstants.EXTRA_CAMERA_INFO, cameraInfo);
         intent.putExtra(IntentConstants.EXTRA_DEVICE_INFO, eZDeviceInfo);
@@ -139,7 +143,17 @@ public class CameraListActivity extends AppCompatActivity implements CameraListP
 
     @Override
     public void onRecordClicked(EZDeviceInfo eZDeviceInfo, int cameraIndex) {
-
+        EZCameraInfo cameraInfo = EZUtils.getCameraInfoFromDevice(eZDeviceInfo, cameraIndex);
+        if (cameraInfo == null) {
+            return;
+        }
+        Intent intent = new Intent(CameraListActivity.this, VideoPlayBackActivity.class);
+        //intent.putExtra(IntentConstants.EXTRA_PLAYER_INDEX_KEY, playerIndex);
+        intent.putExtra(IntentConstants.QUERY_DATE_INTENT_KEY, DateTimeUtil.getNow());
+        intent.putExtra(IntentConstants.EXTRA_CAMERA_INFO, cameraInfo);
+        intent.putExtra(IntentConstants.EXTRA_DEVICE_INFO, eZDeviceInfo);
+        //startActivityForResult(intent, INTENT_REQUEST_CODE_SELECT_NEW_DEVICE);
+        startActivity(intent);
     }
 
     @Override

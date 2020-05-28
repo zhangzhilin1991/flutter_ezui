@@ -1,12 +1,21 @@
-package com.nyiit.smartschool;
+package com.nyiit.smartschool.ui.videoplay;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.PopupWindow;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -14,6 +23,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.tabs.TabLayout;
+import com.nyiit.smartschool.App;
+import com.nyiit.smartschool.R;
 import com.nyiit.smartschool.adapter.VideoPlayerPageAdapter;
 import com.nyiit.smartschool.bean.VideoPlayerBean;
 import com.nyiit.smartschool.constants.IntentConstants;
@@ -27,19 +38,18 @@ import com.videogo.openapi.EZOpenSDKListener;
 import com.videogo.openapi.EZPlayer;
 import com.videogo.openapi.bean.EZCameraInfo;
 import com.videogo.openapi.bean.EZDeviceInfo;
-import com.videogo.util.LogUtil;
 
-import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static com.ezviz.stream.EZError.EZ_OK;
 import static com.nyiit.smartschool.util.Fileutils.getRecordFilePath;
 
 
-public class VideoPlayerActivity extends AppCompatActivity implements View.OnClickListener{
-    private static final String TAG = VideoPlayerActivity.class.getName();
+public class VideoPlayActivity extends AppCompatActivity implements View.OnClickListener{
+    private static final String TAG = VideoPlayActivity.class.getName();
 
     private Map<Integer, VideoPlayerBean> ezPlayerMaps;
 
@@ -50,6 +60,7 @@ public class VideoPlayerActivity extends AppCompatActivity implements View.OnCli
 
     private int currentPlayer = 0;
     protected boolean isRecording = false;
+    private boolean isMute = false;
 
     private VideoPlayer videoPlayer1;
     private VideoPlayer videoPlayer2;
@@ -63,10 +74,14 @@ public class VideoPlayerActivity extends AppCompatActivity implements View.OnCli
 
     private Handler handler;
 
+    private PopupWindow mQualityPopupWindow;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_4chanel_videoplayer);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         handler = new VideoPlayerHandler(this);
         ezPlayerMaps = ((App)getApplication()).getEzPlayerMaps();
@@ -96,6 +111,14 @@ public class VideoPlayerActivity extends AppCompatActivity implements View.OnCli
         //    videoPlayerBean.getEzPlayer().release(); //release player.
         //}
         stopPlayVideo();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            this.finish();
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private void initView() {
@@ -158,7 +181,7 @@ public class VideoPlayerActivity extends AppCompatActivity implements View.OnCli
                 Intent intent = new Intent();
                 intent.putExtra(IntentConstants.EXTRA_PLAYER_INDEX_KEY, pageIndex);
                 setResult(IntentConstants.INTENT_RESPONSE_CODE_SELECT_NEW_DEVICE, intent);
-                VideoPlayerActivity.this.finish();
+                VideoPlayActivity.this.finish();
             }
         });
         viewPager.setAdapter(videoPlayerPageAdapter);
@@ -230,7 +253,12 @@ public class VideoPlayerActivity extends AppCompatActivity implements View.OnCli
                     //}
                     String filePath = Fileutils.getPictureFilePath(this, fileName);
                     Log.d(TAG, "onClick() take photo: filePath = " + filePath);
-                    ezPlayerMaps.get(index).getEzPlayer().capturePicture(filePath);
+                    int ret = ezPlayerMaps.get(index).getEzPlayer().capturePicture(filePath);
+                    if (ret == EZ_OK){
+                        Toast.makeText(this, "图片保存到" + filePath, Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(this, "截图失败", Toast.LENGTH_SHORT).show();
+                    }
                 }
                 break;
             case R.id.iv_record_video:
@@ -251,19 +279,23 @@ public class VideoPlayerActivity extends AppCompatActivity implements View.OnCli
                         ezPlayerMaps.get(index1).getEzPlayer().setStreamDownloadCallback(new EZOpenSDKListener.EZStreamDownloadCallback() {
                             @Override
                             public void onSuccess(String filepath) {
-                                Log.i(TAG, "EZStreamDownloadCallback onSuccess " + filepath);
+                                //Log.i(TAG, "EZStreamDownloadCallback onSuccess " + filepath);
                                 //dialog("Record result", "saved to " + mCurrentRecordPath);
+                                Toast.makeText(VideoPlayActivity.this, "录制文件保存到" + filepath, Toast.LENGTH_SHORT).show();
                             }
 
                             @Override
                             public void onError(EZOpenSDKListener.EZStreamDownloadError code) {
-                                Log.e(TAG, "EZStreamDownloadCallback onError " + code.name());
+                               // Log.e(TAG, "EZStreamDownloadCallback onError " + code.name());
+                                Toast.makeText(VideoPlayActivity.this, "录制失败！", Toast.LENGTH_SHORT).show();
                             }
                         });
                         if (ezPlayerMaps.get(index1).getEzPlayer().startLocalRecordWithFile(filePath1)){
-                            Log.d(TAG, "recording");
+                            //Log.d(TAG, "recording");
+                            Toast.makeText(this, "正在录制...,", Toast.LENGTH_SHORT).show();
                         } else {
-                            Log.d(TAG, "recording failed");
+                            //Log.d(TAG, "recording failed");
+                            Toast.makeText(this, "开始录制失败！", Toast.LENGTH_SHORT).show();
                         }
                     }
                     isRecording = !isRecording;
@@ -291,23 +323,7 @@ public class VideoPlayerActivity extends AppCompatActivity implements View.OnCli
             case R.id.iv_set_resolution:
                 int index4 = viewPager.getCurrentItem();
                 if (ezPlayerMaps.containsKey(index4)) {
-                    EZCameraInfo ezCameraInfo2 = ezPlayerMaps.get(index4).getEzCameraInfo();
-                    String deviceSerial = ezCameraInfo2.getDeviceSerial();
-                    int cameraNo = ezCameraInfo2.getCameraNo();
-                    //try {
-                        new Thread(new Runnable(){
-                            @Override
-                            public void run() {
-                                //super.run();
-                                try {
-                                    EZOpenSDK.getInstance().setVideoLevel(deviceSerial, cameraNo, 1); //balance
-                                    ezPlayerMaps.get(index4).getEzPlayer().stopRealPlay();
-                                    ezPlayerMaps.get(index4).getEzPlayer().stopRealPlay();
-                                } catch (BaseException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        }).start();
+                    showResulationPopupWindow(index4);
                     //} catch (BaseException e) {
                     //    e.printStackTrace();
                     //}
@@ -316,18 +332,99 @@ public class VideoPlayerActivity extends AppCompatActivity implements View.OnCli
         }
     }
 
-    static class VideoPlayerHandler extends Handler {
-        private WeakReference<VideoPlayerActivity> videoPlayerActivityWeakRef;
+    private void showResulationPopupWindow(int index) {
+        EZCameraInfo ezCameraInfo2 = ezPlayerMaps.get(index).getEzCameraInfo();
+        String deviceSerial = ezCameraInfo2.getDeviceSerial();
+        int cameraNo = ezCameraInfo2.getCameraNo();
+        //try {
 
-        public VideoPlayerHandler(VideoPlayerActivity videoPlayerActivity) {
-            videoPlayerActivityWeakRef = new WeakReference<>(videoPlayerActivity);
+        //mQualityPopupWindow = new PopupWindow();
+        LayoutInflater inflater = LayoutInflater.from(this);
+        View contentView = inflater.inflate(R.layout.activity_videoplayer_video_resolution_popupwindow,
+                (ViewGroup) getWindow().getDecorView(), false);
+        RadioGroup videoResolution = contentView.findViewById(R.id.rg_video_resolution);
+
+        switch (ezCameraInfo2.getVideoLevel()) {
+            //case VIDEO_LEVEL_FLUNET:
+            //    videoResolution.check(R.id.btn_video_low_resolution);
+            //    break;
+            case VIDEO_LEVEL_BALANCED:
+                videoResolution.check(R.id.btn_video_medium_resolution);
+                break;
+            case VIDEO_LEVEL_HD:
+                videoResolution.check(R.id.btn_video_high_resolution);
+                break;
+            default:
+                videoResolution.check(R.id.btn_video_low_resolution);
+        }
+
+        mQualityPopupWindow = new PopupWindow(contentView, ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT, true);
+
+        //mQualityPopupWindow.showAtLocation(setResolution);
+        //mQualityPopupWindow.showAtLocation();
+        int[] location = new int[2];
+        setResolution.getLocationOnScreen(location);
+        //popupWindow.setAnimationStyle(R.style.AnimationPopup);
+        mQualityPopupWindow.showAtLocation(setResolution, Gravity.CENTER_HORIZONTAL
+                | Gravity.TOP, 0, location[1] - mQualityPopupWindow.getHeight() + 20);
+
+        //popupWindow.setFocusable(true);
+        //popupWindow.setOutsideTouchable(true);
+
+        videoResolution.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                int videoLevel = 0;
+                switch (checkedId) {
+                    case R.id.btn_video_high_resolution:
+                        videoLevel = 2;
+                        break;
+                    //case R.id.btn_video_low_resolution:
+                    //    videoLevel = 0;
+                    //    break;
+                    case R.id.btn_video_medium_resolution:
+                        videoLevel = 1;
+                        break;
+                    default:
+                        videoLevel = 0;
+                }
+                new Thread(new Runnable(){
+                    @Override
+                    public void run() {
+                        //super.run();
+                        try {
+                            EZOpenSDK.getInstance().setVideoLevel(deviceSerial, cameraNo, 1); //balance
+                            ezPlayerMaps.get(index).getEzPlayer().stopRealPlay();
+                            ezPlayerMaps.get(index).getEzPlayer().stopRealPlay();
+                        } catch (BaseException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }).start();
+            }
+        });
+    }
+
+    private void hideResulationPopupWindow(){
+        if (mQualityPopupWindow != null) {
+            mQualityPopupWindow.dismiss();
+            mQualityPopupWindow = null;
+        }
+    }
+
+    static class VideoPlayerHandler extends Handler {
+        private WeakReference<VideoPlayActivity> videoPlayerActivityWeakRef;
+
+        public VideoPlayerHandler(VideoPlayActivity videoPlayActivity) {
+            videoPlayerActivityWeakRef = new WeakReference<>(videoPlayActivity);
         }
 
 
         @Override
         public void handleMessage(@NonNull Message msg) {
-            VideoPlayerActivity videoPlayerActivity = videoPlayerActivityWeakRef.get();
-            if (videoPlayerActivity == null) {
+            VideoPlayActivity videoPlayActivity = videoPlayerActivityWeakRef.get();
+            if (videoPlayActivity == null) {
                 return;
             }
             //handlemessage
