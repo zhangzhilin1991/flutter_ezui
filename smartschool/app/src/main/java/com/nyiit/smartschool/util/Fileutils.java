@@ -1,9 +1,15 @@
 package com.nyiit.smartschool.util;
 
+import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Environment;
+import android.util.Log;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import static android.os.Environment.DIRECTORY_MOVIES;
 import static android.os.Environment.DIRECTORY_PICTURES;
@@ -36,5 +42,34 @@ public class Fileutils {
             file.mkdirs();
         }
         return file.getAbsolutePath();
+    }
+
+    public static List<File> getFilesAllName(String path) {
+        File file=new File(path);
+        File[] files=file.listFiles();
+        if (files == null){
+            Log.e("error","空目录");return null;}
+        List<File> s = new ArrayList<>();
+        for(int i =0;i<files.length;i++){
+            s.add(files[i]);
+        }
+        return s;
+    }
+
+    private void openAssignFolder(Context context, String path){
+        File file = new File(path);
+        if(null==file || !file.exists()){
+            return;
+        }
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.addCategory(Intent.CATEGORY_DEFAULT);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.setDataAndType(Uri.fromFile(file), "file/*");
+        try {
+            context.startActivity(intent);
+//            startActivity(Intent.createChooser(intent,"选择浏览工具"));
+        } catch (ActivityNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 }
