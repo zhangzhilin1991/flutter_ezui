@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.nyiit.smartschool">
 
     <!--基础功能所需权限-->
@@ -23,6 +24,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/LaunchTheme">
+
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -59,7 +61,6 @@
             >
         </activity>
 
-
         <activity
             android:name="io.flutter.embedding.android.FlutterActivity"
             android:theme="@style/LaunchTheme"
@@ -74,6 +75,19 @@
             android:name="io.flutter.embedding.android.SplashScreenDrawable"
             android:resource="@drawable/launch_background" />
     </activity>
+
+        <provider
+            android:authorities="com.nyiit.smartschool.fileprovider"
+            android:name="androidx.core.content.FileProvider"
+            tools:replace="android:authorities"
+            android:grantUriPermissions="true"
+            android:exported="false">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/filepaths"
+                tools:replace="android:resource" />
+        </provider>
+
     </application>
 
 </manifest>

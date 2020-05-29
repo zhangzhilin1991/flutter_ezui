@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -13,7 +14,6 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
-import android.widget.Switch;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -23,7 +23,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.bigkoo.pickerview.builder.TimePickerBuilder;
 import com.bigkoo.pickerview.listener.OnTimeSelectListener;
 import com.bigkoo.pickerview.view.TimePickerView;
-import com.nyiit.smartschool.MainActivity;
 import com.nyiit.smartschool.R;
 import com.nyiit.smartschool.ui.videoplay.VideoPlayActivity;
 import com.nyiit.smartschool.bean.CloudPartInfoFileEx;
@@ -56,6 +55,7 @@ import java.util.List;
 
 import static com.ezviz.stream.EZError.EZ_OK;
 import static com.nyiit.smartschool.constants.IntentConstants.QUERY_DATE_INTENT_KEY;
+import static com.nyiit.smartschool.util.Fileutils.getPicturePath;
 
 public class VideoPlayBackActivity extends AppCompatActivity implements SurfaceHolder.Callback, View.OnClickListener {
     private static final String TAG = VideoPlayBackActivity.class.getName();
@@ -172,7 +172,7 @@ public class VideoPlayBackActivity extends AppCompatActivity implements SurfaceH
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
-        getMenuInflater().inflate(R.menu.menu, menu);
+        getMenuInflater().inflate(R.menu.menu_video_playback, menu);
         return true;
     }
 
@@ -182,6 +182,13 @@ public class VideoPlayBackActivity extends AppCompatActivity implements SurfaceH
             this.finish();
         } else if (item.getItemId() == R.id.menu_select_date) {
             showDatePicker();
+        } else if (item.getItemId() == R.id.menu_open_record_folder){
+            String path = getPicturePath(this);
+            //Fileutils.OpenAssignFolder(this, path);
+            //ntent intent = getFileIntent(this, path, "image/*");
+            Intent albumIntent = new Intent(Intent.ACTION_VIEW, null);
+            albumIntent.setType("image/*");
+            startActivity(albumIntent);
         }
         return super.onOptionsItemSelected(item);
     }
@@ -214,44 +221,7 @@ public class VideoPlayBackActivity extends AppCompatActivity implements SurfaceH
             if (videoPlayActivity == null) {
                 return;
             }
-            //handlemessage
-            switch (msg.what) {
-                case EZConstants.EZRealPlayConstants.MSG_REALPLAY_PLAY_SUCCESS:
-                    //播放成功
-                    Log.d(TAG, "handleMessage() MSG_REALPLAY_PLAY_SUCCESS");
-                    break;
-                case EZConstants.EZRealPlayConstants.MSG_REALPLAY_PLAY_FAIL:
-                    Log.d(TAG, "handleMessage() MSG_REALPLAY_PLAY_FAIL");
-                    //播放失败,得到失败信息
-                    ErrorInfo errorinfo = (ErrorInfo) msg.obj;
-                    //得到播放失败错误码
-                    int code = errorinfo.errorCode;
-                    //得到播放失败模块错误码
-                    String codeStr = errorinfo.moduleCode;
-                    //得到播放失败描述
-                    String description = errorinfo.description;
-                    //得到播放失败解决方方案
-                    String solution = errorinfo.sulution;
-                    Log.d(TAG, "handleMessage() MSG_REALPLAY_PLAY_FAIL: moduleCode: "
-                            + codeStr + ", description: " + description + ", solution: " + solution);
-                    break;
-                case EZConstants.MSG_VIDEO_SIZE_CHANGED:
-                    //Log.d(TAG, "handleMessage() MSG_VIDEO_SIZE_CHANGED");
-                    //解析出视频画面分辨率回调
-                    try {
-                        String temp = (String) msg.obj;
-                        String[] strings = temp.split(":");
-                        int mVideoWidth = Integer.parseInt(strings[0]);
-                        int mVideoHeight = Integer.parseInt(strings[1]);
-                        //解析出视频分辨率
-                        Log.d(TAG, "handleMessage() MSG_VIDEO_SIZE_CHANGED mVideoWidth: " + mVideoWidth + ", mVideoHeight: " + mVideoHeight);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    break;
-                default:
-                    break;
-            }
+
 
             super.handleMessage(msg);
         }

@@ -9,12 +9,21 @@ public class VideoPlayerBean {
     EZDeviceInfo ezDeviceInfo;
     EZPlayer ezPlayer;
     int pageIndex;
+    boolean isMute = false;
 
     public VideoPlayerBean(EZCameraInfo ezCameraInfo, EZDeviceInfo ezDeviceInfo, EZPlayer ezPlayer, int pageIndex) {
         this.ezCameraInfo = ezCameraInfo;
         this.ezDeviceInfo = ezDeviceInfo;
         this.ezPlayer = ezPlayer;
         this.pageIndex = pageIndex;
+    }
+
+    public boolean isMute() {
+        return isMute;
+    }
+
+    public void setMute(boolean mute) {
+        isMute = mute;
     }
 
     public EZCameraInfo getEzCameraInfo() {

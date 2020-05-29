@@ -1,0 +1,11 @@
+<resources>
+    <paths>
+        <!-- Context.getFilesDir() + "/path/" -->
+        <files-path
+            name="picture"
+            path="Pictures/"/>
+        <files-path
+            name="media"
+            path="Movies/"/>
+    </paths>
+</resources>

@@ -8,4 +8,6 @@ public class IntentConstants {
     public static final String EXTRA_CAMERA_INFO = "EXTRA_CAMERA_INFO";
     public static final String EXTRA_DEVICE_INFO = "EXTRA_DEVICE_INFO";
     public static final String QUERY_DATE_INTENT_KEY = "queryDate";
+    private static final int REQUEST_SELECT_FILE = 0x100;
+
 }
