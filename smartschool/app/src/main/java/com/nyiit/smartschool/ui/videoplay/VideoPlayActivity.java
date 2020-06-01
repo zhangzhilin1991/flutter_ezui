@@ -37,6 +37,7 @@ import com.nyiit.smartschool.R;
 import com.nyiit.smartschool.adapter.VideoPlayerPageAdapter;
 import com.nyiit.smartschool.bean.VideoPlayerBean;
 import com.nyiit.smartschool.constants.IntentConstants;
+import com.nyiit.smartschool.ui.util.AudioPlayUtil;
 import com.nyiit.smartschool.util.Fileutils;
 import com.nyiit.smartschool.widget.VideoPlayer;
 import com.videogo.errorlayer.ErrorInfo;
@@ -89,6 +90,8 @@ public class VideoPlayActivity extends AppCompatActivity implements View.OnClick
 
     private PopupWindow mQualityPopupWindow;
 
+    private AudioPlayUtil audioPlayUtil;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -97,6 +100,7 @@ public class VideoPlayActivity extends AppCompatActivity implements View.OnClick
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         handler = new VideoPlayerHandler(this);
+        audioPlayUtil = AudioPlayUtil.getInstance(this.getApplication());
         ezPlayerMaps = ((App)getApplication()).getEzPlayerMaps();
 
         initView();
@@ -329,6 +333,7 @@ public class VideoPlayActivity extends AppCompatActivity implements View.OnClick
                     //}
                     String filePath = Fileutils.getPictureFilePath(this, fileName);
                     Log.d(TAG, "onClick() take photo: filePath = " + filePath);
+                    audioPlayUtil.playAudioFile(AudioPlayUtil.CAPTURE_SOUND);
                     int ret = ezPlayerMaps.get(index).getEzPlayer().capturePicture(filePath);
                     if (ret == EZ_OK){
                         Toast.makeText(this, "图片保存到" + filePath, Toast.LENGTH_SHORT).show();
@@ -379,6 +384,7 @@ public class VideoPlayActivity extends AppCompatActivity implements View.OnClick
                             });
                             }
                         });
+                        audioPlayUtil.playAudioFile(AudioPlayUtil.RECORD_SOUND);
                         if (ezPlayerMaps.get(index1).getEzPlayer().startLocalRecordWithFile(filePath1)){
                             //Log.d(TAG, "recording");
                             Toast.makeText(this, "正在录制...,", Toast.LENGTH_SHORT).show();

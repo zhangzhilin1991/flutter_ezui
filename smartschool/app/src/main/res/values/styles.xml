@@ -6,7 +6,21 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:windowAnimationStyle">@style/anim_fade</item>
+        <item name="android:actionBarStyle">@style/my_actionbar_style</item>
+    </style>
 
+    <style name="anim_fade" parent="@android:style/Animation.Activity">
+        <item name="android:activityOpenEnterAnimation">@anim/from_right_in</item>
+        <item name="android:activityOpenExitAnimation">@anim/to_left_out</item>
+        <item name="android:activityCloseEnterAnimation">@anim/from_left_in</item>
+        <item name="android:activityCloseExitAnimation">@anim/to_right_out</item>
+    </style>
+
+    <style name="my_actionbar_style" parent="@style/Widget.AppCompat.Light.ActionBar">
+        <item name="android:background">@drawable/actionbar_gradient_background</item>
+        <item name="backgroundStacked">@drawable/actionbar_gradient_background</item>
+        <item name="backgroundSplit">@drawable/actionbar_gradient_background</item>
     </style>
 
     <style name="LaunchTheme" parent="Theme.AppCompat.Light.NoActionBar">
@@ -16,6 +30,7 @@
         <item name="android:windowTranslucentStatus">true</item>
         <item name="android:windowIsTranslucent">false</item>
         <item name="android:windowNoTitle">true</item>
+        <item name="android:windowAnimationStyle">@style/anim_fade</item>
         <item name="android:windowBackground">@drawable/launch_background</item>
     </style>
 

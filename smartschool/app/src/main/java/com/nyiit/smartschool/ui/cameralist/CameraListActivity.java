@@ -64,6 +64,9 @@ public class CameraListActivity extends AppCompatActivity implements CameraListP
         setContentView(R.layout.activity_cameralist);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        //getSupportActionBar().setBackgroundDrawable(this.getDrawable(R.drawable.actionbar_gradient_background));
+        //getSupportActionBar().setSplitBackgroundDrawable(this.getDrawable(R.drawable.actionbar_gradient_background));
+        //getSupportActionBar().setStackedBackgroundDrawable(this.getDrawable(R.drawable.actionbar_gradient_background));
 
         handler = new CameraListHandler(this);
 
@@ -88,6 +91,7 @@ public class CameraListActivity extends AppCompatActivity implements CameraListP
 
     @Override
     protected void onDestroy() {
+        overridePendingTransition(R.anim.from_left_in, R.anim.to_right_out);
         super.onDestroy();
         ((App)getApplication()).getEzPlayerMaps().clear();
     }

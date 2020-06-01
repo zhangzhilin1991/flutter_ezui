@@ -24,6 +24,7 @@ import com.bigkoo.pickerview.builder.TimePickerBuilder;
 import com.bigkoo.pickerview.listener.OnTimeSelectListener;
 import com.bigkoo.pickerview.view.TimePickerView;
 import com.nyiit.smartschool.R;
+import com.nyiit.smartschool.ui.util.AudioPlayUtil;
 import com.nyiit.smartschool.ui.videoplay.VideoPlayActivity;
 import com.nyiit.smartschool.bean.CloudPartInfoFileEx;
 import com.nyiit.smartschool.constants.IntentConstants;
@@ -33,6 +34,7 @@ import com.videogo.errorlayer.ErrorInfo;
 import com.videogo.exception.BaseException;
 import com.videogo.openapi.EZConstants;
 import com.videogo.openapi.EZOpenSDK;
+import com.videogo.openapi.EZOpenSDKListener;
 import com.videogo.openapi.EZPlayer;
 import com.videogo.openapi.bean.EZCameraInfo;
 import com.videogo.openapi.bean.EZCloudRecordFile;
@@ -45,6 +47,7 @@ import com.videogo.util.LocalInfo;
 import com.videogo.util.LogUtil;
 import com.videogo.util.Utils;
 
+import java.io.File;
 import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -56,6 +59,7 @@ import java.util.List;
 import static com.ezviz.stream.EZError.EZ_OK;
 import static com.nyiit.smartschool.constants.IntentConstants.QUERY_DATE_INTENT_KEY;
 import static com.nyiit.smartschool.util.Fileutils.getPicturePath;
+import static com.nyiit.smartschool.util.Fileutils.getRecordFilePath;
 
 public class VideoPlayBackActivity extends AppCompatActivity implements SurfaceHolder.Callback, View.OnClickListener {
     private static final String TAG = VideoPlayBackActivity.class.getName();
@@ -81,6 +85,10 @@ public class VideoPlayBackActivity extends AppCompatActivity implements SurfaceH
 
     private LocalInfo localInfo;
 
+    private AudioPlayUtil audioPlayUtil;
+
+    private boolean isRecording = false;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -89,6 +97,8 @@ public class VideoPlayBackActivity extends AppCompatActivity implements SurfaceH
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         handler = new Handler();
+        audioPlayUtil = AudioPlayUtil.getInstance(this.getApplication());
+        localInfo = LocalInfo.getInstance();
 
         initView();
         handleIntent();
@@ -151,6 +161,7 @@ public class VideoPlayBackActivity extends AppCompatActivity implements SurfaceH
                 String fileName = ezCameraInfo.getCameraName() + "_" + System.currentTimeMillis();
                 String filePath = Fileutils.getPictureFilePath(this, fileName);
                 Log.d(TAG, "onClick() take photo: filePath = " + filePath);
+                audioPlayUtil.playAudioFile(AudioPlayUtil.CAPTURE_SOUND);
                 if (ezPlayer.capturePicture(filePath) == EZ_OK) {
                     Toast.makeText(VideoPlayBackActivity.this, "图片保存到" + filePath, Toast.LENGTH_SHORT).show();
                 } else {
@@ -158,11 +169,60 @@ public class VideoPlayBackActivity extends AppCompatActivity implements SurfaceH
                 }
                 break;
             case R.id.ib_play_record:
-                //ezPlayer
+                    if (isRecording) {
+                        Log.d(TAG, "onClick() stop record video");
+                        Toast.makeText(this, "停止录制", Toast.LENGTH_SHORT).show();
+                        ezPlayer.stopLocalRecord();
+                    } else {
+                        String fileName1 = ezCameraInfo.getCameraName() + "_" + System.currentTimeMillis() + ".mp4";
+                        String filePath1 = getRecordFilePath(this, fileName1);
+                        Log.d(TAG, "onClick() start record video: filePath = " + filePath1);
+                        ezPlayer.setStreamDownloadCallback(new EZOpenSDKListener.EZStreamDownloadCallback() {
+                            @Override
+                            public void onSuccess(String filepath) {
+                                Log.i(TAG, "EZStreamDownloadCallback onSuccess " + filepath);
+                                //dialog("Record result", "saved to " + mCurrentRecordPath);
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast.makeText(VideoPlayBackActivity.this, "录制文件保存到" + filepath, Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                                Fileutils.saveVideo(VideoPlayBackActivity.this, new File(filePath1));
+                            }
+
+                            @Override
+                            public void onError(EZOpenSDKListener.EZStreamDownloadError code) {
+                                //Log.e(TAG, "EZStreamDownloadCallback onError " + code.name());
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast.makeText(VideoPlayBackActivity.this, "录制失败！", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                            }
+                        });
+                        audioPlayUtil.playAudioFile(AudioPlayUtil.RECORD_SOUND);
+                        if (ezPlayer.startLocalRecordWithFile(filePath1)){
+                            //Log.d(TAG, "recording");
+                            Toast.makeText(this, "正在录制...,", Toast.LENGTH_SHORT).show();
+                        } else {
+                            //Log.d(TAG, "recording failed");
+                            Toast.makeText(this, "开始录制失败！", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                    isRecording = !isRecording;
                 break;
             case R.id.ib_download_record_video:
                 break;
             case R.id.ib_set_mute:
+                if (localInfo.isSoundOpen()) {
+                    ezPlayer.closeSound();
+                    ib_switch_mute.setBackgroundResource(R.mipmap.mute);
+                } else {
+                    ezPlayer.openSound();
+                    ib_switch_mute.setBackgroundResource(R.mipmap.sound);
+                }
                 break;
             case R.id.ib_set:
                 break;
