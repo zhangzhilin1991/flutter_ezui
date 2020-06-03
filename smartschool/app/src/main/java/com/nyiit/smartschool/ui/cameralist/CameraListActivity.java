@@ -64,6 +64,7 @@ public class CameraListActivity extends AppCompatActivity implements CameraListP
         setContentView(R.layout.activity_cameralist);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle("监控设备列表");
         //getSupportActionBar().setBackgroundDrawable(this.getDrawable(R.drawable.actionbar_gradient_background));
         //getSupportActionBar().setSplitBackgroundDrawable(this.getDrawable(R.drawable.actionbar_gradient_background));
         //getSupportActionBar().setStackedBackgroundDrawable(this.getDrawable(R.drawable.actionbar_gradient_background));

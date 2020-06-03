@@ -98,6 +98,8 @@ public class VideoPlayActivity extends AppCompatActivity implements View.OnClick
         setContentView(R.layout.activity_4chanel_videoplayer);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle("实时预览");
+
 
         handler = new VideoPlayerHandler(this);
         audioPlayUtil = AudioPlayUtil.getInstance(this.getApplication());

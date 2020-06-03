@@ -95,6 +95,7 @@ public class VideoPlayBackActivity extends AppCompatActivity implements SurfaceH
         setContentView(R.layout.activity_video_playback);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle("视频回放");
 
         handler = new Handler();
         audioPlayUtil = AudioPlayUtil.getInstance(this.getApplication());
